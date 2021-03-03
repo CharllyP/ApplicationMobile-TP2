@@ -4,18 +4,29 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 
+//classe Book déclaré comme étant une entité de la table "books"
+@Entity(tableName = "books")
 public class Book  {
 
     public static final String TAG = Book.class.getSimpleName();
 
 
+    //Attribut id de type long + déclaration comme clé primaire
+    @PrimaryKey(autoGenerate=true)
+    @NonNull
+    @ColumnInfo(name = "bookId")
+    private long id;
     private String title;
     private String authors;
     private String year; // publication year
     private String genres;
     private String publisher;
+
 
     public Book(String title, String authors, String year, String genres, String publisher) {
         this.title = title;
@@ -23,6 +34,12 @@ public class Book  {
         this.year = year;
         this.genres = genres;
         this.publisher = publisher;
+    }
+
+    public long getId() { return id; }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitle() { return title; }
