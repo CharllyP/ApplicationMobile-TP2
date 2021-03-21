@@ -60,8 +60,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<fr.uavignon.ceri.tp2.R
             itemDetail = itemView.findViewById(R.id.item_detail);
 
             itemView.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-
+                @Override public void onClick(View v)
+                {
                     long id = RecyclerAdapter.this.bookList.get((int)getAdapterPosition()).getId();
                     /* Snackbar.make(v, "Click detected on chapter " + (position+1),
                         Snackbar.LENGTH_LONG)
@@ -72,10 +72,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<fr.uavignon.ceri.tp2.R
                     action.setBookNum(id);
                     Navigation.findNavController(v).navigate(action);
 
-
                 }
             });
-
         }
     }
 
