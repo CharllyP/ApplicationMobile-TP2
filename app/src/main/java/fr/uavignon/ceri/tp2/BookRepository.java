@@ -10,9 +10,9 @@ import java.util.List;
 import fr.uavignon.ceri.tp2.data.Book;
 
 public class BookRepository {
-    final MutableLiveData<List<Book>> selectedBook = new MutableLiveData<>();
-    private LiveData<List<Book>> allBook;
 
+    final MutableLiveData<Book> selectedBook = new MutableLiveData<>();
+    private LiveData<List<Book>> allBook;
     private BookDao bookDao;
 
     public BookRepository(Application application) {
@@ -21,7 +21,8 @@ public class BookRepository {
         allBook = bookDao.getAllBooks();
     }
 
-    public MutableLiveData<List<Book>> getSearchResults() {
+    public MutableLiveData<Book> getSearchResults()
+    {
         return selectedBook;
     }
 

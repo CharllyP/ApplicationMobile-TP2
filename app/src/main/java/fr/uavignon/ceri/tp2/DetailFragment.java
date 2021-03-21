@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import fr.uavignon.ceri.tp2.data.Book;
@@ -17,6 +19,8 @@ import fr.uavignon.ceri.tp2.data.Book;
 public class DetailFragment extends Fragment {
 
     private EditText textTitle, textAuthors, textYear, textGenres, textPublisher;
+    public DetailViewModel viewModel;
+
 
     @Override
     public View onCreateView(
@@ -28,11 +32,14 @@ public class DetailFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(DetailViewModel.class);
 
         // Get selected book
         DetailFragmentArgs args = DetailFragmentArgs.fromBundle(getArguments());
-        Book book = Book.books[(int)args.getBookNum()];
+        viewModel.setSelectedBook((int)args.getBookNum());
+
 
         textTitle = (EditText) view.findViewById(R.id.nameBook);
         textAuthors = (EditText) view.findViewById(R.id.editAuthors);
@@ -40,18 +47,53 @@ public class DetailFragment extends Fragment {
         textGenres = (EditText) view.findViewById(R.id.editGenres);
         textPublisher = (EditText) view.findViewById(R.id.editPublisher);
 
-        textTitle.setText(book.getTitle());
-        textAuthors.setText(book.getAuthors());
-        textYear.setText(book.getYear());
-        textGenres.setText(book.getGenres());
-        textPublisher.setText(book.getPublisher());
-
-        view.findViewById(R.id.buttonBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavHostFragment.findNavController(fr.uavignon.ceri.tp2.DetailFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+        viewModel.getBook().observe(getViewLifecycleOwner(),
+            new Observer<Book>()
+            {
+                @Override
+                public void onChanged(Book book)
+                {
+                    textTitle.setText(book.getTitle());
+                    textAuthors.setText(book.getAuthors());
+                    textYear.setText(book.getYear());
+                    textGenres.setText(book.getGenres());
+                    textPublisher.setText(book.getPublisher());
+                }
             }
-        });
+        );
+
+
+        view.findViewById(R.id.buttonBack).setOnClickListener(
+            new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    NavHostFragment.findNavController(fr.uavignon.ceri.tp2.DetailFragment.this)
+                            .navigate(R.id.action_SecondFragment_to_FirstFragment);
+                }
+            }
+        );
+
+        view.findViewById(R.id.buttonUpdate).setOnClickListener(
+            new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    String title = textTitle.getText().toString();
+                    String authors = textAuthors.getText().toString();
+                    String year = textYear.getText().toString();
+                    String genres = textGenres.getText().toString();
+                    String publisher = textPublisher.getText().toString();
+
+                    DetailFragmentArgs args = DetailFragmentArgs.fromBundle(getArguments());
+                    int id = (int)args.getBookNum();
+                    Book updatedBook = new Book(title, authors, year, genres, publisher);
+                    updatedBook.setId(id);
+                    viewModel.updateBook(updatedBook);
+                }
+            }
+        );
     }
 }

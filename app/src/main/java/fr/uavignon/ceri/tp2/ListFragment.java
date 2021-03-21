@@ -7,17 +7,25 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.List;
+
+import fr.uavignon.ceri.tp2.data.Book;
+
 public class ListFragment extends Fragment {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    RecyclerView.Adapter adapter;
+    RecyclerAdapter adapter;
+    private ListViewModel viewModel;
+
 
     @Override
     public View onCreateView(
@@ -30,12 +38,24 @@ public class ListFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ListViewModel.class);
 
         recyclerView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new RecyclerAdapter();
         recyclerView.setAdapter(adapter);
+
+        viewModel.getBooks().observe(getViewLifecycleOwner(),
+            new Observer<List<Book>>()
+            {
+                @Override
+                public void onChanged(List<Book> books)
+                {
+                    adapter.setBookList(books);
+                }
+            }
+        );
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
