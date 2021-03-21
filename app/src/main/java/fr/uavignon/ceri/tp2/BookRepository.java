@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import fr.uavignon.ceri.tp2.data.Book;
 
@@ -52,5 +54,23 @@ public class BookRepository {
 
     public LiveData <List<Book>> getAllBooks() {
         return allBook;
+    }
+
+    public Integer countAllBooks()
+    {
+        Future<Integer> c = BookRoomDatabase.databaseWriteExecutor.submit(bookDao::countAllBooks);
+
+        try
+        {
+            return c.get();
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        } catch (ExecutionException e)
+        {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -4,9 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,7 +19,7 @@ public class DetailFragment extends Fragment {
 
     private EditText textTitle, textAuthors, textYear, textGenres, textPublisher;
     public DetailViewModel viewModel;
-
+    public Button updateBtn;
 
     @Override
     public View onCreateView(
@@ -46,6 +45,7 @@ public class DetailFragment extends Fragment {
         textYear = (EditText) view.findViewById(R.id.editYear);
         textGenres = (EditText) view.findViewById(R.id.editGenres);
         textPublisher = (EditText) view.findViewById(R.id.editPublisher);
+        updateBtn = view.findViewById(R.id.buttonUpdate);
 
         viewModel.getBook().observe(getViewLifecycleOwner(),
             new Observer<Book>()
@@ -53,11 +53,18 @@ public class DetailFragment extends Fragment {
                 @Override
                 public void onChanged(Book book)
                 {
-                    textTitle.setText(book.getTitle());
-                    textAuthors.setText(book.getAuthors());
-                    textYear.setText(book.getYear());
-                    textGenres.setText(book.getGenres());
-                    textPublisher.setText(book.getPublisher());
+                    if(book != null && book.getId() != -1) {
+                        textTitle.setText(book.getTitle());
+                        textAuthors.setText(book.getAuthors());
+                        textYear.setText(book.getYear());
+                        textGenres.setText(book.getGenres());
+                        textPublisher.setText(book.getPublisher());
+                    }
+                    else
+                    {
+                        updateBtn.setText("Ajouter");
+                    }
+
                 }
             }
         );
@@ -91,7 +98,9 @@ public class DetailFragment extends Fragment {
                     int id = (int)args.getBookNum();
                     Book updatedBook = new Book(title, authors, year, genres, publisher);
                     updatedBook.setId(id);
-                    viewModel.updateBook(updatedBook);
+                    viewModel.insertOrUpdateBook(updatedBook);
+                    NavHostFragment.findNavController(fr.uavignon.ceri.tp2.DetailFragment.this)
+                            .navigate(R.id.action_SecondFragment_to_FirstFragment);
                 }
             }
         );

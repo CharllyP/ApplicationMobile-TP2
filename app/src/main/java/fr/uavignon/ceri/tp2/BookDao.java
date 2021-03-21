@@ -30,4 +30,7 @@ public interface BookDao {
 
     @Query("SELECT * FROM books")
     LiveData<List<Book>> getAllBooks();
+
+    @Query("SELECT COUNT(*) from books")
+    int countAllBooks();
 }
